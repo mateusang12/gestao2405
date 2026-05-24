@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Ordens de Serviço</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <h2>Painel Oficina - Gestão de O.S.</h2>
+        <a href="home.html" class="btn-logout">Sair</a>
+    </header>
+
+    <main class="dashboard-container">
+        <section class="coluna">
+            <div class="coluna-header em-andamento">
+                <h3>🛠️ Em Andamento</h3>
+            </div>
+            <div id="listaAndamento" class="lista-cards">
+            </div>
+        </section>
+
+        <section class="coluna">
+            <div class="coluna-header concluido">
+                <h3>✅ Concluídos</h3>
+            </div>
+            <div id="listaConcluidos" class="lista-cards">
+            </div>
+        </section>
+    </main>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

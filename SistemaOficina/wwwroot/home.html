@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Oficina - Home</title>
+    <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo">Sistema Oficina</div>
+        <nav>
+            <a href="index.html" class="nav-link">Agendar Serviços</a>
+            <button id="btnAbrirLogin" class="btn-login">Login Admin</button>
+        </nav>
+    </header>
+
+    <main class="hero-container">
+        <h1>Cuidamos do seu veículo com tecnologia e precisão</h1>
+        <p>De trocas de óleo preventivas a diagnósticos eletrônicos complexos. Agende seu horário online em poucos minutos.</p>
+        <a href="index.html" class="btn-cta">Agendar Agora</a>
+    </main>
+
+    <div id="modalLogin" class="modal hidden">
+        <div class="modal-content">
+            <span id="btnFecharLogin" class="close-btn">&times;</span>
+            <h3>Acesso Administrativo</h3>
+            <form id="formLogin">
+                <div class="form-group">
+                    <label for="usuario">Usuário</label>
+                    <input type="text" id="usuario" required placeholder="Digite o usuário">
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" required placeholder="Digite a senha">
+                </div>
+                <button type="submit" class="btn-enviar">Entrar</button>
+                <p id="erroLogin" class="erro-msg hidden">Usuário ou senha inválidos.</p>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/home.js"></script>
+</body>
+</html>
