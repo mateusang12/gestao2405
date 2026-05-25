@@ -1,13 +1,17 @@
-﻿namespace SistemaOficina.Models
+﻿using System;
+
+namespace SistemaOficina.Models
 {
     public class Agendamento
     {
         public int Id { get; set; }
-        public string NomeCliente { get; set; } = string.Empty;
-        public string Telefone { get; set; } = string.Empty;
-        public string MarcaCarro { get; set; } = string.Empty;
-        public string ModeloCarro { get; set; } = string.Empty;
-        public string TipoServico { get; set; } = string.Empty;
-        public DateTime DataCriacao { get; set; } = DateTime.Now;
+        public string NomeCliente { get; set; }
+        public string Telefone { get; set; }
+        public string MarcaCarro { get; set; }
+        public string ModeloCarro { get; set; }
+        public string TipoServico { get; set; }
+
+        // ADICIONE ESTA LINHA ABAIXO:
+        public DateTime DataAgendamento { get; set; }
     }
 }

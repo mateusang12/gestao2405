@@ -1,23 +1,27 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configura os controladores e força o JSON a manter os nomes originais das propriedades
+builder.Services.AddControllers()
+    .AddJsonOptions(options => {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    });
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Ativa a fábrica de conexões HTTP
+builder.Services.AddHttpClient();
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-app.UseStaticFiles();
+app.UseStaticFiles(); // Importante para rodar o index.html da wwwroot
+
 app.MapControllers();
 
 app.Run();

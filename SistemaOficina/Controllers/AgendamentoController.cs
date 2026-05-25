@@ -1,4 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 using SistemaOficina.DTOs;
 using SistemaOficina.Models;
 
@@ -8,25 +12,68 @@ namespace SistemaOficina.Controllers
     [Route("api/[controller]")]
     public class AgendamentoController : ControllerBase
     {
-        // Mock ou simulador de dados de carros vendidos no Brasil (2010 - 2026)
-        [HttpGet("carros-brasil")]
-        public IActionResult GetCarrosBrasil()
-        {
-            var dadosCarros = new List<object>
-            {
-                new { Marca = "Fiat", Modelos = new[] { "Strada", "Palio", "Uno", "Argo", "Mobi", "Toro" } },
-                new { Marca = "Volkswagen", Modelos = new[] { "Gol", "Polo", "Fox", "T-Cross", "Saveiro", "Tera" } },
-                new { Marca = "Chevrolet", Modelos = new[] { "Onix", "Prisma", "Celta", "Tracker", "S10" } },
-                new { Marca = "Hyundai", Modelos = new[] { "HB20", "Creta", "HB20S" } },
-                new { Marca = "Toyota", Modelos = new[] { "Corolla", "Hilux", "Etios" } },
-                new { Marca = "Ford", Modelos = new[] { "Ka", "Fiesta", "EcoSport" } },
-                new { Marca = "BYD", Modelos = new[] { "Dolphin Mini", "Dolphin", "Song Plus" } }
-            };
+        private readonly IHttpClientFactory _httpClientFactory;
 
-            return Ok(dadosCarros);
+        public AgendamentoController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
         }
 
-        // Os 10 serviços mais procurados em oficinas mecânicas
+        // 1. Busca TODAS as marcas de carros direto da FIPE
+        [HttpGet("marcas")]
+        public async Task<IActionResult> GetMarcasFipe()
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+
+                var url = "https://parallelum.com.br/fipe/api/v1/carros/marcas";
+                var response = await client.GetStringAsync(url);
+
+                // Desserializa garantindo que o mapeamento respeite a estrutura original da FIPE
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var marcas = JsonSerializer.Deserialize<object>(response, options);
+
+                return Ok(marcas);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensagem = "Erro ao buscar marcas na FIPE", detalhe = ex.Message });
+            }
+        }
+
+        // 2. Busca os modelos baseado no código da marca selecionada
+        [HttpGet("marcas/{marcaId}/modelos")]
+        public async Task<IActionResult> GetModelosFipe(string marcaId)
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+
+                var url = $"https://parallelum.com.br/fipe/api/v1/carros/marcas/{marcaId}/modelos";
+                var response = await client.GetStringAsync(url);
+
+                // Em vez de usar JsonDocument, vamos extrair a estrutura usando uma classe dinâmica anônima.
+                // Isso padroniza o JSON que sai do C# para o JavaScript
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                using var doc = JsonDocument.Parse(response);
+                var modelosRaw = doc.RootElement.GetProperty("modelos").GetRawText();
+
+                // Converte a propriedade "modelos" em um objeto puro que o .NET consegue entregar perfeitamente
+                var listaModelos = JsonSerializer.Deserialize<object>(modelosRaw, options);
+
+                return Ok(listaModelos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensagem = "Erro ao buscar modelos na FIPE", detalhe = ex.Message });
+            }
+        }
+
+        // 3. Os 10 serviços mais procurados
         [HttpGet("servicos-oficina")]
         public IActionResult GetServicosOficina()
         {
@@ -43,7 +90,6 @@ namespace SistemaOficina.Controllers
                 "Troca da Correia Dentada",
                 "Revisão Geral Preventiva"
             };
-
             return Ok(servicos);
         }
 
@@ -53,15 +99,15 @@ namespace SistemaOficina.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Aqui você salvaria no banco via Data/OficinaContext. Exemplo simulado:
             var novoAgendamento = new Agendamento
             {
-                Id = new Random().Next(1, 1000), // Apenas para simulação
+                Id = new Random().Next(1, 1000),
                 NomeCliente = dto.NomeCliente,
                 Telefone = dto.Telefone,
                 MarcaCarro = dto.MarcaCarro,
                 ModeloCarro = dto.ModeloCarro,
-                TipoServico = dto.TipoServico
+                TipoServico = dto.TipoServico,
+                DataAgendamento = dto.DataAgendamento
             };
 
             return Created(string.Empty, new { mensagem = "Agendamento realizado com sucesso!", dados = novoAgendamento });
