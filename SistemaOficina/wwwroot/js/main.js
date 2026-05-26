@@ -1,4 +1,4 @@
-﻿// 🌍 URL Base do Backend. Quando hospedarmos no Render, mudaremos apenas este link!
+﻿// 🌍 URL Base do Backend no Render
 const API_URL = "https://oficina-msa-api.onrender.com";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -9,9 +9,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const inputData = document.getElementById("dataAgendamento");
     const erroData = document.getElementById("erroData");
 
-    // 1. Carrega todas as Marcas Reais da FIPE ao iniciar a página
+    // 1. Carrega todas as Marcas Reais da FIPE vindo da rota correta do Backend
     try {
-        const res = await fetch(`${API_URL}/api/agendamento/marcas`);
+        const res = await fetch(`${API_URL}/api/fipe/marcas`);
         const marcas = await res.json();
 
         marcas.forEach(item => {
@@ -35,7 +35,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         try {
-            const res = await fetch(`${API_URL}/api/agendamento/marcas/${codigoMarca}/modelos`);
+            // Rota corrigida apontando para o controlador da FIPE do seu backend
+            const res = await fetch(`${API_URL}/api/fipe/marcas/${codigoMarca}/modelos`);
             const listaDeModelos = await res.json();
 
             if (Array.isArray(listaDeModelos) && listaDeModelos.length > 0) {
@@ -62,6 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 3. Carrega o Top 10 de Serviços vindo do Backend
     try {
+        // Rota do agendamento para buscar os serviços padrões da oficina
         const resServicos = await fetch(`${API_URL}/api/agendamento/servicos-oficina`);
         const servicos = await resServicos.json();
 
@@ -84,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const minutos = String(agora.getMinutes()).padStart(2, '0');
     inputData.min = `${ano}-${mes}-${dia}T${horas}:${minutos}`;
 
-    // Envio do formulário
+    // Envio do formulário (POST)
     document.getElementById("formOficina").addEventListener("submit", async (e) => {
         e.preventDefault();
         erroData.classList.add("hidden");
@@ -113,24 +115,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         try {
             const response = await fetch(`${API_URL}/api/agendamento`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', // Método POST correto que o back-end espera!
+                headers: { 'Type': 'application/json', 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
             if (response.ok) {
                 const resultado = await response.json();
                 const boxMsg = document.getElementById("mensagemSucesso");
-                boxMsg.textContent = resultado.mensagem;
+                boxMsg.textContent = resultado.mensagem || "Agendamento realizado com sucesso!";
                 boxMsg.classList.remove("hidden");
                 document.getElementById("formOficina").reset();
                 selectModelo.disabled = true;
                 inputData.min = `${ano}-${mes}-${dia}T${horas}:${minutos}`;
             } else {
-                alert("Erro ao enviar dados. Verifique os campos.");
+                alert("Erro ao enviar dados. Verifique se o formulário está preenchido corretamente.");
             }
         } catch (error) {
             console.error("Erro na requisição:", error);
+            alert("Não foi possível conectar à API na nuvem.");
         }
     });
 });
