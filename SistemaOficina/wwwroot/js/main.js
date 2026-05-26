@@ -9,9 +9,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const inputData = document.getElementById("dataAgendamento");
     const erroData = document.getElementById("erroData");
 
-    // 1. Carrega todas as Marcas Reais da FIPE vindo da rota correta do Backend
+    // 1. Carrega todas as Marcas Reais da FIPE vindo da rota correta do Backend (api/agendamento/marcas)
     try {
-        const res = await fetch(`${API_URL}/api/fipe/marcas`);
+        const res = await fetch(`${API_URL}/api/agendamento/marcas`); // <-- CORRIGIDO AQUI
         const marcas = await res.json();
 
         marcas.forEach(item => {
@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         try {
-            // Rota corrigida apontando para o controlador da FIPE do seu backend
-            const res = await fetch(`${API_URL}/api/fipe/marcas/${codigoMarca}/modelos`);
+            // Rota corrigida apontando para o caminho real do AgendamentoController
+            const res = await fetch(`${API_URL}/api/agendamento/marcas/${codigoMarca}/modelos`); // <-- CORRIGIDO AQUI
             const listaDeModelos = await res.json();
 
             if (Array.isArray(listaDeModelos) && listaDeModelos.length > 0) {
@@ -63,8 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 3. Carrega o Top 10 de Serviços vindo do Backend
     try {
-        // Rota do agendamento para buscar os serviços padrões da oficina
-        const resServicos = await fetch(`${API_URL}/api/agendamento/servicos-oficina`);
+        const resServicos = await fetch(`${API_URL}/api/agendamento/servicos-oficina`); // <-- ESTA ESTÁ CORRETA!
         const servicos = await resServicos.json();
 
         servicos.forEach(servico => {

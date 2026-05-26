@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SistemaOficina.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/agendamento")]
     public class AgendamentoController : ControllerBase
     {
         private readonly IFipeService _fipeService;
