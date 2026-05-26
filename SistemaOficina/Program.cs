@@ -6,8 +6,21 @@ using SistemaOficina.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<OficinaDbContext>(options =>
-    options.UseInMemoryDatabase("OficinaDb"));
+// Substitui a linha do builder.Services.AddDbContext antiga por este bloco:
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    // Para testes locais sem variáveis de ambiente, usa o banco em memória
+    builder.Services.AddDbContext<OficinaDbContext>(options =>
+        options.UseInMemoryDatabase("OficinaDb"));
+}
+else
+{
+    // Em produção (Render), liga-se diretamente ao PostgreSQL do Supabase
+    builder.Services.AddDbContext<OficinaDbContext>(options =>
+        options.UseNpgsql(connectionString));
+}
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => {
