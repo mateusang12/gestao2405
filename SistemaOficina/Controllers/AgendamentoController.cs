@@ -12,10 +12,10 @@ namespace SistemaOficina.Controllers
     [Route("api/[controller]")]
     public class AgendamentoController : ControllerBase
     {
-        private readonly FipeService _fipeService;
-        private readonly AgendamentoRepository _repository;
+        private readonly IFipeService _fipeService;
+        private readonly IAgendamentoRepository _repository;
 
-        public AgendamentoController(FipeService fipeService, AgendamentoRepository repository)
+        public AgendamentoController(IFipeService fipeService, IAgendamentoRepository repository)
         {
             _fipeService = fipeService;
             _repository = repository;

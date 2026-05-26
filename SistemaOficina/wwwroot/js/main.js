@@ -1,30 +1,28 @@
 ﻿document.addEventListener("DOMContentLoaded", async () => {
     const selectMarca = document.getElementById("selectMarca");
     const selectModelo = document.getElementById("selectModelo");
-    const selectLocalidade = document.getElementById("selectLocalidade"); // 📍 Mapeado para evitar erros
+    const selectLocalidade = document.getElementById("selectLocalidade");
     const selectServico = document.getElementById("selectServico");
     const inputData = document.getElementById("dataAgendamento");
     const erroData = document.getElementById("erroData");
 
-    // 1. Carrega todas as Marcas Reais da FIPE ao iniciar a página
     try {
         const res = await fetch('/api/agendamento/marcas');
         const marcas = await res.json();
 
         marcas.forEach(item => {
             const opt = document.createElement("option");
-            opt.value = item.codigo; // Código usado para buscar os modelos depois (ex: "21")
-            opt.textContent = item.nome; // Nome visível para o cliente (ex: "Fiat")
+            opt.value = item.codigo; 
+            opt.textContent = item.nome; 
             selectMarca.appendChild(opt);
         });
     } catch (err) {
         console.error("Erro ao carregar marcas da FIPE:", err);
     }
 
-    // 2. Escuta a mudança de marca para carregar os modelos em cascata
-    // 2. Escuta a mudança de marca para carregar os modelos em cascata
+    
     selectMarca.addEventListener("change", async (e) => {
-        const codigoMarca = e.target.value; // Isso DEVE retornar o número (ex: "22")
+        const codigoMarca = e.target.value;
 
         selectModelo.innerHTML = '<option value="">Selecione o Modelo</option>';
         if (!codigoMarca) {
@@ -32,14 +30,12 @@
             return;
         }
 
-    // ... resto do fetch dos modelos continua igual ...
 
         try {
-            // Busca os modelos associados àquela marca específica
             const res = await fetch(`/api/agendamento/marcas/${codigoMarca}/modelos`);
             const listaDeModelos = await res.json();
 
-            // Como nosso backend agora já envia a lista pura, verificamos se ela é um Array válido
+  
             if (Array.isArray(listaDeModelos) && listaDeModelos.length > 0) {
                 listaDeModelos.forEach(item => {
                     const opt = document.createElement("option");
@@ -50,7 +46,6 @@
                     selectModelo.appendChild(opt);
                 });
 
-                // Desbloqueia o campo na tela para o cliente escolher
                 selectModelo.disabled = false;
             } else {
                 console.error("Não foi possível renderizar, o retorno não veio como lista:", listaDeModelos);
@@ -63,7 +58,6 @@
         }
     });
 
-    // 🛠️ 3. RECUPERADO: Carrega o Top 10 de Serviços vindo do Backend
     try {
         const resServicos = await fetch('/api/agendamento/servicos-oficina');
         const servicos = await resServicos.json();
@@ -78,7 +72,6 @@
         console.error("Erro ao carregar serviços:", err);
     }
 
-    // Configura trava de data mínima
     const agora = new Date();
     const ano = agora.getFullYear();
     const mes = String(agora.getMonth() + 1).padStart(2, '0');
@@ -87,7 +80,7 @@
     const minutos = String(agora.getMinutes()).padStart(2, '0');
     inputData.min = `${ano}-${mes}-${dia}T${horas}:${minutos}`;
 
-    // Envio do formulário
+
     document.getElementById("formOficina").addEventListener("submit", async (e) => {
         e.preventDefault();
         erroData.classList.add("hidden");
@@ -109,7 +102,7 @@
             telefone: document.getElementById("telefone").value,
             marcaCarro: selectMarca.options[selectMarca.selectedIndex].text,
             modeloCarro: selectModelo.value,
-            localidade: selectLocalidade.value, // Usando a constante mapeada no topo
+            localidade: selectLocalidade.value,
             tipoServico: selectServico.value,
             dataAgendamento: inputData.value
         };

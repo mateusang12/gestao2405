@@ -8,7 +8,7 @@
     min-height: 100vh;
 }
 
-/* Navbar */
+
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -40,7 +40,6 @@
     font-weight: bold;
 }
 
-/* Estilização do Carrossel */
 .carousel-container {
     position: relative;
     width: 100%;
@@ -85,7 +84,7 @@
     pointer-events: none;
 }
 
-/* Hero Section */
+
 .hero-container {
     text-align: center;
     padding: 60px 20px 40px 20px;
@@ -116,7 +115,7 @@
     display: inline-block;
 }
 
-/* NOVO: Seção de Endereços */
+
 .enderecos-container {
     display: flex;
     justify-content: center;
@@ -150,12 +149,12 @@
         color: #495057;
     }
 
-/* NOVO: Rodapé da Oficina */
+
 .footer-oficina {
     background-color: #1a1a1a;
     color: #ffffff;
     padding: 30px 20px 15px 20px;
-    margin-top: auto; /* Garante o rodapé na base se houver pouca rota */
+    margin-top: auto; 
     text-align: center;
 }
 
@@ -202,7 +201,7 @@
     color: #868e96;
 }
 
-/* Modais de Login */
+
 .modal {
     position: fixed;
     top: 0;
@@ -272,7 +271,7 @@
     display: none !important;
 }
 
-/* Responsividade Básica para os Endereços */
+
 @media (max-width: 768px) {
     .enderecos-container {
         flex-direction: column;

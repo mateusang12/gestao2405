@@ -6,11 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SistemaOficina.Repositories
 {
-    public class AgendamentoRepository
+    public class AgendamentoRepository : IAgendamentoRepository
     {
         private readonly OficinaDbContext _context;
 
-        // Construtor recebendo o contexto do banco via injeção de dependência
         public AgendamentoRepository(OficinaDbContext context)
         {
             _context = context;
