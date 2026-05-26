@@ -56,4 +56,11 @@ app.UseStaticFiles();
 
 app.MapControllers();
 
+// Adicione isso logo antes de app.Run(); para criar as tabelas no Supabase automaticamente
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<OficinaDbContext>();
+    dbContext.Database.EnsureCreated();
+}
+
 app.Run();
