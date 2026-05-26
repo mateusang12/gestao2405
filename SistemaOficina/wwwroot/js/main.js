@@ -1,6 +1,7 @@
 ﻿document.addEventListener("DOMContentLoaded", async () => {
     const selectMarca = document.getElementById("selectMarca");
     const selectModelo = document.getElementById("selectModelo");
+    const selectLocalidade = document.getElementById("selectLocalidade"); // 📍 Mapeado para evitar erros
     const selectServico = document.getElementById("selectServico");
     const inputData = document.getElementById("dataAgendamento");
     const erroData = document.getElementById("erroData");
@@ -21,14 +22,17 @@
     }
 
     // 2. Escuta a mudança de marca para carregar os modelos em cascata
+    // 2. Escuta a mudança de marca para carregar os modelos em cascata
     selectMarca.addEventListener("change", async (e) => {
-        const codigoMarca = e.target.value;
+        const codigoMarca = e.target.value; // Isso DEVE retornar o número (ex: "22")
 
         selectModelo.innerHTML = '<option value="">Selecione o Modelo</option>';
         if (!codigoMarca) {
             selectModelo.disabled = true;
             return;
         }
+
+    // ... resto do fetch dos modelos continua igual ...
 
         try {
             // Busca os modelos associados àquela marca específica
@@ -59,6 +63,21 @@
         }
     });
 
+    // 🛠️ 3. RECUPERADO: Carrega o Top 10 de Serviços vindo do Backend
+    try {
+        const resServicos = await fetch('/api/agendamento/servicos-oficina');
+        const servicos = await resServicos.json();
+
+        servicos.forEach(servico => {
+            const opt = document.createElement("option");
+            opt.value = servico;
+            opt.textContent = servico;
+            selectServico.appendChild(opt);
+        });
+    } catch (err) {
+        console.error("Erro ao carregar serviços:", err);
+    }
+
     // Configura trava de data mínima
     const agora = new Date();
     const ano = agora.getFullYear();
@@ -88,8 +107,9 @@
         const payload = {
             nomeCliente: document.getElementById("nomeCliente").value,
             telefone: document.getElementById("telefone").value,
-            marcaCarro: selectMarca.options[selectMarca.selectedIndex].text, // Pega o TEXTO da marca (ex: "Fiat") e não o número
+            marcaCarro: selectMarca.options[selectMarca.selectedIndex].text,
             modeloCarro: selectModelo.value,
+            localidade: selectLocalidade.value, // Usando a constante mapeada no topo
             tipoServico: selectServico.value,
             dataAgendamento: inputData.value
         };

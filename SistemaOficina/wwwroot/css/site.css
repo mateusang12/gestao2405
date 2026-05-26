@@ -35,6 +35,19 @@
     font-weight: bold;
 }
 
+.footer-oficina {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    padding: 30px 20px 15px 20px;
+    margin-top: auto; /* Garante o rodapé na base se houver pouca rota */
+    text-align: center;
+}
+
+.dev {
+    font-size: 12px;
+    color: gray;
+}
+
 /* Envoltório da página em 3 colunas estruturadas */
 .page-wrapper {
     display: grid;

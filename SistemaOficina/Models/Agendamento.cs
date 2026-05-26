@@ -9,9 +9,8 @@ namespace SistemaOficina.Models
         public string Telefone { get; set; }
         public string MarcaCarro { get; set; }
         public string ModeloCarro { get; set; }
+        public string Localidade { get; set; }
         public string TipoServico { get; set; }
-
-        // ADICIONE ESTA LINHA ABAIXO:
         public DateTime DataAgendamento { get; set; }
     }
 }
