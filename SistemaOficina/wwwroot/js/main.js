@@ -1,4 +1,7 @@
-﻿document.addEventListener("DOMContentLoaded", async () => {
+﻿// 🌍 URL Base do Backend. Quando hospedarmos no Render, mudaremos apenas este link!
+const API_URL = "https://oficina-msa-api.onrender.com";
+
+document.addEventListener("DOMContentLoaded", async () => {
     const selectMarca = document.getElementById("selectMarca");
     const selectModelo = document.getElementById("selectModelo");
     const selectLocalidade = document.getElementById("selectLocalidade");
@@ -6,21 +9,22 @@
     const inputData = document.getElementById("dataAgendamento");
     const erroData = document.getElementById("erroData");
 
+    // 1. Carrega todas as Marcas Reais da FIPE ao iniciar a página
     try {
-        const res = await fetch('/api/agendamento/marcas');
+        const res = await fetch(`${API_URL}/api/agendamento/marcas`);
         const marcas = await res.json();
 
         marcas.forEach(item => {
             const opt = document.createElement("option");
-            opt.value = item.codigo; 
-            opt.textContent = item.nome; 
+            opt.value = item.codigo;
+            opt.textContent = item.nome;
             selectMarca.appendChild(opt);
         });
     } catch (err) {
         console.error("Erro ao carregar marcas da FIPE:", err);
     }
 
-    
+    // 2. Escuta a mudança de marca para carregar os modelos em cascata
     selectMarca.addEventListener("change", async (e) => {
         const codigoMarca = e.target.value;
 
@@ -30,12 +34,10 @@
             return;
         }
 
-
         try {
-            const res = await fetch(`/api/agendamento/marcas/${codigoMarca}/modelos`);
+            const res = await fetch(`${API_URL}/api/agendamento/marcas/${codigoMarca}/modelos`);
             const listaDeModelos = await res.json();
 
-  
             if (Array.isArray(listaDeModelos) && listaDeModelos.length > 0) {
                 listaDeModelos.forEach(item => {
                     const opt = document.createElement("option");
@@ -58,8 +60,9 @@
         }
     });
 
+    // 3. Carrega o Top 10 de Serviços vindo do Backend
     try {
-        const resServicos = await fetch('/api/agendamento/servicos-oficina');
+        const resServicos = await fetch(`${API_URL}/api/agendamento/servicos-oficina`);
         const servicos = await resServicos.json();
 
         servicos.forEach(servico => {
@@ -72,6 +75,7 @@
         console.error("Erro ao carregar serviços:", err);
     }
 
+    // Configura trava de data mínima
     const agora = new Date();
     const ano = agora.getFullYear();
     const mes = String(agora.getMonth() + 1).padStart(2, '0');
@@ -80,7 +84,7 @@
     const minutos = String(agora.getMinutes()).padStart(2, '0');
     inputData.min = `${ano}-${mes}-${dia}T${horas}:${minutos}`;
 
-
+    // Envio do formulário
     document.getElementById("formOficina").addEventListener("submit", async (e) => {
         e.preventDefault();
         erroData.classList.add("hidden");
@@ -108,7 +112,7 @@
         };
 
         try {
-            const response = await fetch('/api/agendamento', {
+            const response = await fetch(`${API_URL}/api/agendamento`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
